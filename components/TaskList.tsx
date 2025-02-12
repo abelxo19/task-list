@@ -1,9 +1,9 @@
 "use client"
 
 import type React from "react"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { motion, AnimatePresence, type Variants } from "framer-motion"
-import { PlusIcon, CheckIcon, TrashIcon } from "lucide-react"
+import { PlusIcon, CheckIcon, TrashIcon, PencilIcon, XIcon } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 
@@ -31,6 +31,9 @@ export function TaskList() {
   const [tasks, setTasks] = useState<Task[]>([])
   const [newTask, setNewTask] = useState("")
   const [filter, setFilter] = useState<FilterType>("all")
+  const [editingTaskId, setEditingTaskId] = useState<string | null>(null)
+  const [editText, setEditText] = useState("")
+  const editInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     const savedTasks = localStorage.getItem("tasks")
@@ -51,6 +54,12 @@ export function TaskList() {
     localStorage.setItem("filter", filter)
   }, [filter])
 
+  useEffect(() => {
+    if (editingTaskId && editInputRef.current) {
+      editInputRef.current.focus()
+    }
+  }, [editingTaskId])
+
   const addTask = (e: React.FormEvent) => {
     e.preventDefault()
     if (newTask.trim()) {
@@ -65,6 +74,31 @@ export function TaskList() {
 
   const removeTask = (id: string) => {
     setTasks(tasks.filter((task) => task.id !== id))
+  }
+
+  const startEditing = (task: Task) => {
+    setEditingTaskId(task.id)
+    setEditText(task.text)
+  }
+
+  const saveEdit = () => {
+    if (editingTaskId) {
+      setTasks(tasks.map((task) => (task.id === editingTaskId ? { ...task, text: editText.trim() } : task)))
+      setEditingTaskId(null)
+    }
+  }
+
+  const cancelEdit = () => {
+    setEditingTaskId(null)
+    setEditText("")
+  }
+
+  const handleEditKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      saveEdit()
+    } else if (e.key === "Escape") {
+      cancelEdit()
+    }
   }
 
   const filteredTasks = tasks.filter((task) => {
@@ -115,7 +149,7 @@ export function TaskList() {
             whileHover="hover"
             className="flex items-center justify-between bg-gray-100 dark:bg-gray-700 p-3 rounded-lg mb-2"
           >
-            <div className="flex items-center">
+            <div className="flex items-center flex-grow mr-2">
               <motion.div whileTap={{ scale: 0.9 }} transition={{ type: "spring", stiffness: 500, damping: 10 }}>
                 <Button
                   variant="ghost"
@@ -135,27 +169,71 @@ export function TaskList() {
                   </motion.div>
                 </Button>
               </motion.div>
-              <motion.span
-                animate={{
-                  opacity: task.completed ? 0.5 : 1,
-                  textDecoration: task.completed ? "line-through" : "none",
-                }}
-                transition={{ duration: 0.2 }}
-                className="text-gray-800 dark:text-white"
-              >
-                {task.text}
-              </motion.span>
+              {editingTaskId === task.id ? (
+                <Input
+                  ref={editInputRef}
+                  type="text"
+                  value={editText}
+                  onChange={(e) => setEditText(e.target.value)}
+                  onBlur={saveEdit}
+                  onKeyDown={handleEditKeyDown}
+                  className="flex-grow"
+                />
+              ) : (
+                <motion.span
+                  animate={{
+                    opacity: task.completed ? 0.5 : 1,
+                    textDecoration: task.completed ? "line-through" : "none",
+                  }}
+                  transition={{ duration: 0.2 }}
+                  className="text-gray-800 dark:text-white flex-grow"
+                  onClick={() => startEditing(task)}
+                >
+                  {task.text}
+                </motion.span>
+              )}
             </div>
-            <motion.div whileTap={{ scale: 0.9 }}>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => removeTask(task.id)}
-                className="text-red-500 hover:text-red-700 transition-colors duration-200"
-              >
-                <TrashIcon className="h-5 w-5" />
-              </Button>
-            </motion.div>
+            <div className="flex">
+              {editingTaskId === task.id ? (
+                <>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={saveEdit}
+                    className="text-green-500 hover:text-green-700 transition-colors duration-200"
+                  >
+                    <CheckIcon className="h-5 w-5" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={cancelEdit}
+                    className="text-red-500 hover:text-red-700 transition-colors duration-200"
+                  >
+                    <XIcon className="h-5 w-5" />
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => startEditing(task)}
+                    className="text-blue-500 hover:text-blue-700 transition-colors duration-200"
+                  >
+                    <PencilIcon className="h-5 w-5" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => removeTask(task.id)}
+                    className="text-red-500 hover:text-red-700 transition-colors duration-200"
+                  >
+                    <TrashIcon className="h-5 w-5" />
+                  </Button>
+                </>
+              )}
+            </div>
           </motion.div>
         ))}
       </AnimatePresence>
