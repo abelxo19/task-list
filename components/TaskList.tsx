@@ -108,8 +108,8 @@ export function TaskList() {
   })
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
-      <form onSubmit={addTask} className="flex mb-4">
+    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-4 sm:p-6 mx-auto max-w-3xl">
+      <form onSubmit={addTask} className="flex flex-col sm:flex-row mb-4 gap-2">
         <Input
           type="text"
           value={newTask}
@@ -123,7 +123,7 @@ export function TaskList() {
         </Button>
       </form>
 
-      <motion.div className="flex justify-center space-x-2 mb-4" initial={false}>
+      <motion.div className="flex flex-wrap justify-center gap-2 mb-4" initial={false}>
         {(["all", "completed", "pending"] as const).map((filterType) => (
           <motion.div
             key={filterType}
@@ -147,9 +147,9 @@ export function TaskList() {
             animate="visible"
             exit="exit"
             whileHover="hover"
-            className="flex items-center justify-between bg-gray-100 dark:bg-gray-700 p-3 rounded-lg mb-2"
+            className="flex flex-col sm:flex-row items-start sm:items-center justify-between bg-gray-100 dark:bg-gray-700 p-3 rounded-lg mb-2 gap-2"
           >
-            <div className="flex items-center flex-grow mr-2">
+            <div className="flex items-center flex-grow mr-2 w-full sm:w-auto">
               <motion.div whileTap={{ scale: 0.9 }} transition={{ type: "spring", stiffness: 500, damping: 10 }}>
                 <Button
                   variant="ghost"
@@ -193,7 +193,7 @@ export function TaskList() {
                 </motion.span>
               )}
             </div>
-            <div className="flex">
+            <div className="flex justify-end w-full sm:w-auto mt-2 sm:mt-0">
               {editingTaskId === task.id ? (
                 <>
                   <Button
