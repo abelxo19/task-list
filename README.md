@@ -53,9 +53,9 @@ Editing the Project
 You can start editing the page by modifying page.tsx. The page auto-updates as you edit the file.
 
 ## Additional Features
-- Task persistence using local storage
 - Task filtering (all, completed, pending)
 - Task editing
+- Dark Theme
 
 ## Learn More
 
