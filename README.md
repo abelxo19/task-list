@@ -53,9 +53,10 @@ Editing the Project
 You can start editing the page by modifying page.tsx. The page auto-updates as you edit the file.
 
 ## Additional Features
-- Task filtering (all, completed, pending)
-- Task editing
-- Dark Theme
+✅ Task filtering (All, Completed, Pending)  
+✏️ Task editing for updating existing tasks  
+🌙 Dark mode support  
+
 
 ## Learn More
 
