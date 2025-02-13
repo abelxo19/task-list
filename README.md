@@ -58,5 +58,3 @@ You can start editing the page by modifying page.tsx. The page auto-updates as y
 🌙 Dark mode support  
 
 
-## Learn More
-
