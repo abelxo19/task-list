@@ -56,5 +56,6 @@ You can start editing the page by modifying page.tsx. The page auto-updates as y
 ✅ Task filtering (All, Completed, Pending)  
 ✏️ Task editing for updating existing tasks  
 🌙 Dark mode support  
+🎭 Smooth animations for adding and removing tasks  
 
 
